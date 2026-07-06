@@ -14,6 +14,7 @@ const baseConfigPath = path.join(repoRoot, "quartz.config.yaml")
 const siteConfigPath = path.join(contentRepo, "site.yaml")
 const contentDir = path.join(contentRepo, "content")
 const generatedConfigPath = path.join(repoRoot, ".quartz-site-config.generated.yaml")
+const pluginIndexPath = path.join(repoRoot, ".quartz", "plugins", "index.ts")
 
 function ensurePathExists(filePath, message) {
   if (!fs.existsSync(filePath)) {
@@ -103,6 +104,10 @@ ensurePathExists(contentDir, `Missing content directory: ${contentDir}`)
 
 if (!fs.existsSync(path.join(repoRoot, "node_modules"))) {
   run("npm", ["ci"], repoRoot)
+}
+
+if (!fs.existsSync(pluginIndexPath)) {
+  run("node", [path.join(repoRoot, "quartz/bootstrap-cli.mjs"), "plugin", "install"], repoRoot)
 }
 
 const baseConfig = YAML.parse(fs.readFileSync(baseConfigPath, "utf8"))
