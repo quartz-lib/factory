@@ -1,0 +1,102 @@
+name: Deploy Quartz site to GitHub Pages
+
+on:
+  workflow_call:
+    inputs:
+      quartz-repository:
+        description: Repository that contains the shared Quartz template
+        required: false
+        type: string
+        default: quartz-lib/factory
+      quartz-ref:
+        description: Git ref of the shared Quartz template
+        required: false
+        type: string
+        default: master
+      content-directory:
+        description: Directory in the content repository that contains site.yaml and content/
+        required: false
+        type: string
+        default: "."
+  workflow_dispatch:
+    inputs:
+      quartz-repository:
+        description: Repository that contains the shared Quartz template
+        required: false
+        type: string
+        default: quartz-lib/factory
+      quartz-ref:
+        description: Git ref of the shared Quartz template
+        required: false
+        type: string
+        default: master
+      content-directory:
+        description: Directory in this repository that contains site.yaml and content/
+        required: false
+        type: string
+        default: "."
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quartz template
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.quartz-repository || 'quartz-lib/factory' }}
+          ref: ${{ inputs.quartz-ref || 'master' }}
+          path: quartz-template
+          fetch-depth: 0
+
+      - name: Checkout content repository
+        uses: actions/checkout@v6
+        with:
+          path: content-repo
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: quartz-template/.node-version
+          cache: npm
+          cache-dependency-path: quartz-template/package-lock.json
+
+      - name: Cache Quartz plugins
+        uses: actions/cache@v5
+        with:
+          path: quartz-template/.quartz/plugins
+          key: ${{ runner.os }}-plugins-${{ hashFiles('quartz-template/quartz.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-plugins-
+
+      - name: Install dependencies
+        working-directory: quartz-template
+        run: npm ci
+
+      - name: Build Quartz
+        working-directory: quartz-template
+        run: node scripts/build-content-site.mjs "../content-repo/${{ inputs.content-directory || '.' }}" ../public
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
