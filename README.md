@@ -102,6 +102,18 @@ node scripts/build-content-site.mjs ../your-content-repo ./public
 
 脚本会读取内容仓库的 `site.yaml`，合并到本仓库的 `quartz.config.yaml`，并把站点输出到指定目录。
 
+本地预览某个内容仓库时，可以直接运行：
+
+```bash
+make blog ../your-content-repo/content
+```
+
+这会读取 `../your-content-repo/site.yaml` 和 `../your-content-repo/content/`，启动 Quartz 本地服务。需要指定端口时传 `PORT`：
+
+```bash
+make blog ../your-content-repo/content PORT=3000
+```
+
 ## 模板配置
 
 共享配置位于 `quartz.config.yaml`。它只保存模板层面的默认插件、布局和样式；具体站点标题、域名、footer 链接和站点级插件开关应放在内容仓库的 `site.yaml` 中。

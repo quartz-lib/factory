@@ -2,19 +2,101 @@
 import fs from "node:fs"
 import path from "node:path"
 import { spawnSync } from "node:child_process"
-import YAML from "yaml"
 
 const scriptDir = path.dirname(new URL(import.meta.url).pathname)
 const repoRoot = path.resolve(scriptDir, "..")
 
-const contentRepo = path.resolve(process.argv[2] ?? path.join(repoRoot, "content-site"))
-const outputDir = path.resolve(process.argv[3] ?? path.join(repoRoot, "public-experiment"))
+const quartzFlagsWithValues = new Set([
+  "--baseDir",
+  "--concurrency",
+  "--directory",
+  "--output",
+  "--port",
+  "--remoteDevHost",
+  "--wsPort",
+  "-c",
+  "-d",
+  "-o",
+])
+
+function parseArgs(rawArgs) {
+  const positional = []
+  const quartzArgs = []
+
+  for (let i = 0; i < rawArgs.length; i++) {
+    const arg = rawArgs[i]
+
+    if (arg === "--") {
+      quartzArgs.push(...rawArgs.slice(i + 1))
+      break
+    }
+
+    if (arg.startsWith("-")) {
+      quartzArgs.push(arg)
+
+      const [flagName] = arg.split("=", 1)
+      if (
+        quartzFlagsWithValues.has(flagName) &&
+        !arg.includes("=") &&
+        rawArgs[i + 1] &&
+        !rawArgs[i + 1].startsWith("-")
+      ) {
+        quartzArgs.push(rawArgs[i + 1])
+        i++
+      }
+
+      continue
+    }
+
+    positional.push(arg)
+  }
+
+  if (positional.length > 2) {
+    console.error(
+      "Usage: node scripts/build-content-site.mjs [content-repo] [output-dir] [quartz build flags]",
+    )
+    process.exit(1)
+  }
+
+  return {
+    inputDir: path.resolve(positional[0] ?? path.join(repoRoot, "content")),
+    outputDir: path.resolve(positional[1] ?? path.join(repoRoot, "public")),
+    quartzArgs,
+  }
+}
+
+const { inputDir, outputDir, quartzArgs } = parseArgs(process.argv.slice(2))
 
 const baseConfigPath = path.join(repoRoot, "quartz.config.yaml")
-const siteConfigPath = path.join(contentRepo, "site.yaml")
-const contentDir = path.join(contentRepo, "content")
 const generatedConfigPath = path.join(repoRoot, ".quartz-site-config.generated.yaml")
 const pluginIndexPath = path.join(repoRoot, ".quartz", "plugins", "index.ts")
+
+function resolveContentPaths(inputDir) {
+  const repoSiteConfigPath = path.join(inputDir, "site.yaml")
+  const repoContentDir = path.join(inputDir, "content")
+
+  if (fs.existsSync(repoSiteConfigPath) && fs.existsSync(repoContentDir)) {
+    return {
+      siteConfigPath: repoSiteConfigPath,
+      contentDir: repoContentDir,
+    }
+  }
+
+  const parentSiteConfigPath = path.join(path.dirname(inputDir), "site.yaml")
+  if (path.basename(inputDir) === "content" && fs.existsSync(parentSiteConfigPath)) {
+    return {
+      siteConfigPath: parentSiteConfigPath,
+      contentDir: inputDir,
+    }
+  }
+
+  return {
+    siteConfigPath: repoSiteConfigPath,
+    contentDir: repoContentDir,
+  }
+}
+
+const { siteConfigPath, contentDir } = resolveContentPaths(inputDir)
 
 function ensurePathExists(filePath, message) {
   if (!fs.existsSync(filePath)) {
@@ -110,6 +192,7 @@ if (!fs.existsSync(pluginIndexPath)) {
   run("node", [path.join(repoRoot, "quartz/bootstrap-cli.mjs"), "plugin", "install"], repoRoot)
 }
 
+const YAML = (await import("yaml")).default
 const baseConfig = YAML.parse(fs.readFileSync(baseConfigPath, "utf8"))
 const siteConfig = YAML.parse(fs.readFileSync(siteConfigPath, "utf8"))
 
@@ -125,7 +208,15 @@ fs.writeFileSync(
 
 run(
   "node",
-  [path.join(repoRoot, "quartz/bootstrap-cli.mjs"), "build", "-d", contentDir, "-o", outputDir],
+  [
+    path.join(repoRoot, "quartz/bootstrap-cli.mjs"),
+    "build",
+    "-d",
+    contentDir,
+    "-o",
+    outputDir,
+    ...quartzArgs,
+  ],
   repoRoot,
   { QUARTZ_CONFIG_PATH: generatedConfigPath },
 )
