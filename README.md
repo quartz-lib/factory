@@ -8,7 +8,7 @@
 
 - 基于 Quartz v5 和 `quartz-community/*` 插件体系。
 - 预置 Obsidian 风格 Markdown、搜索、图谱、反向链接、目录、RSS、站点地图等常用能力。
-- 预装 `quartz-lib/full-width-tables`、`quartz-lib/index-content-page`、`quartz-lib/sort-by-order`、`quartz-lib/heading-format`。
+- 内置 `full-width-tables`、`index-content-page`、`sort-by-order`、`heading-format` 插件源码，便于随模板一起维护。
 - 提供可复用 GitHub Pages workflow，内容仓库无需复制完整 Quartz 源码。
 - 构建时强制内容仓库提供 `configuration.pageTitle` 和 `configuration.baseUrl`，避免误用模板默认站点信息。
 

@@ -1,0 +1,75 @@
+{
+  "name": "@quartz-community/heading-format",
+  "version": "0.1.0",
+  "description": "Quartz plugin that styles h2, h3, and h4 headings with distinct visual presets.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/quartz-lib/heading-format",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quartz-lib/heading-format"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  },
+  "dependencies": {
+    "@quartz-community/types": "github:quartz-community/types",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/hast": "^3.0.4",
+    "@types/node": "^24.10.0",
+    "preact": "^10.28.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "unified": "^11.0.5",
+    "vfile": "^6.0.3",
+    "vitest": "^2.1.9"
+  },
+  "quartz": {
+    "name": "heading-format",
+    "displayName": "Heading Format",
+    "category": "transformer",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 50,
+    "defaultEnabled": true,
+    "defaultOptions": {
+      "style": "accent"
+    },
+    "optionSchema": {
+      "style": {
+        "type": "enum",
+        "values": [
+          "accent",
+          "minimal",
+          "gradient",
+          "card"
+        ]
+      }
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

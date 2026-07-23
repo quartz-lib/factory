@@ -128,9 +128,9 @@
       "installedAt": "2026-06-09T08:04:16.433Z"
     },
     "full-width-tables": {
-      "source": "github:quartz-lib/full-width-tables",
-      "resolved": "https://github.com/quartz-lib/full-width-tables.git",
-      "commit": "917e17bad4739c5d0a12489c611c6fab908f00d7",
+      "source": "./plugins/full-width-tables",
+      "resolved": "./plugins/full-width-tables",
+      "commit": "local",
       "installedAt": "2026-06-03T07:14:29.752Z"
     },
     "github-flavored-markdown": {
@@ -152,15 +152,15 @@
       "installedAt": "2026-05-24T15:36:17.005Z"
     },
     "heading-format": {
-      "source": "github:quartz-lib/heading-format",
-      "resolved": "https://github.com/quartz-lib/heading-format.git",
-      "commit": "0a9d130bf9c656c846f24de2adae3f82b984fd1a",
+      "source": "./plugins/heading-format",
+      "resolved": "./plugins/heading-format",
+      "commit": "local",
       "installedAt": "2026-06-15T09:26:51.621Z"
     },
     "index-content-page": {
-      "source": "github:quartz-lib/index-content-page",
-      "resolved": "https://github.com/quartz-lib/index-content-page.git",
-      "commit": "16ebbce935843ecc2ab84a9bf5b9ec77fddfc147",
+      "source": "./plugins/index-content-page",
+      "resolved": "./plugins/index-content-page",
+      "commit": "local",
       "installedAt": "2026-06-09T06:02:47.925Z"
     },
     "latex": {
@@ -230,9 +230,9 @@
       "installedAt": "2026-06-09T08:04:21.278Z"
     },
     "sort-by-order": {
-      "source": "github:quartz-lib/sort-by-order",
-      "resolved": "https://github.com/quartz-lib/sort-by-order.git",
-      "commit": "4c0ebb1660dfe5c10ac766ecf1d941ed09dd1e72",
+      "source": "./plugins/sort-by-order",
+      "resolved": "./plugins/sort-by-order",
+      "commit": "local",
       "installedAt": "2026-06-11T08:30:36.045Z"
     },
     "spacer": {

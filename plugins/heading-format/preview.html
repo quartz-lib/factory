@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heading Format — 标题样式预览</title>
+    <style>
+      :root {
+        --light: #faf8f8;
+        --dark: #141021;
+        --secondary: #284b63;
+        --tertiary: #84a59d;
+        --gray: #4e4e4e;
+        --lightgray: #f0f0f0;
+        --header-font: "Georgia", "Songti SC", "SimSun", serif;
+        --body-font: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      [data-theme="dark"] {
+        --light: #1e1e21;
+        --dark: #fbfffe;
+        --secondary: #6b879a;
+        --gray: #b0b0b0;
+        --lightgray: #292633;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--body-font);
+        background: var(--light);
+        color: var(--dark);
+        line-height: 1.75;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: color-mix(in srgb, var(--light) 90%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--lightgray);
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .topbar h1 {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .style-select {
+        border: 1px solid var(--lightgray);
+        background: var(--light);
+        color: var(--dark);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        min-width: 200px;
+      }
+
+      .theme-btn {
+        border: 1px solid var(--lightgray);
+        background: transparent;
+        color: var(--dark);
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        cursor: pointer;
+      }
+
+      .layout {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+      }
+
+      .style-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .style-label {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--secondary);
+        padding: 0.2rem 0.6rem;
+        border: 1px solid color-mix(in srgb, var(--secondary) 30%, transparent);
+        border-radius: 4px;
+      }
+
+      .style-hint {
+        font-size: 0.8rem;
+        color: var(--gray);
+      }
+
+      .article {
+        font-size: 1.05rem;
+      }
+      .article p {
+        margin-bottom: 1rem;
+        color: var(--gray);
+      }
+      .article ul {
+        margin: 0 0 1rem 1.5rem;
+        color: var(--gray);
+      }
+      .article li {
+        margin-bottom: 0.4rem;
+      }
+
+      /* ── 方案 1：强调条 accent ── */
+      .style-accent h2 {
+        font-family: var(--header-font);
+        font-size: 1.45rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 2.2rem 0 0.8rem;
+        padding: 0.5rem 0 0.5rem 1rem;
+        border-left: 4px solid var(--secondary);
+        background: color-mix(in srgb, var(--secondary) 8%, transparent);
+        border-radius: 0 4px 4px 0;
+      }
+      .style-accent h3 {
+        font-family: var(--header-font);
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--gray);
+        margin: 1.5rem 0 0.6rem;
+        padding: 0.2rem 0 0.2rem 0.75rem;
+        border-left: 2px solid var(--tertiary);
+      }
+      .style-accent h4 {
+        font-family: var(--header-font);
+        font-size: 1rem;
+        font-weight: 500;
+        color: color-mix(in srgb, var(--gray) 85%, transparent);
+        margin: 1.1rem 0 0.4rem;
+        padding: 0.1rem 0 0.1rem 1.25rem;
+        border-left: 1px dotted var(--tertiary);
+      }
+
+      /* ── 方案 2：极简 minimal ── */
+      .style-minimal h2 {
+        font-family: var(--header-font);
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--secondary);
+        margin: 2rem 0 0.7rem;
+      }
+      .style-minimal h3 {
+        font-family: var(--header-font);
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--gray);
+        margin: 1.2rem 0 0.5rem;
+        padding-left: 0.75em;
+      }
+      .style-minimal h4 {
+        font-family: var(--header-font);
+        font-size: 1rem;
+        font-weight: 400;
+        color: color-mix(in srgb, var(--gray) 80%, transparent);
+        margin: 1rem 0 0.4rem;
+        padding-left: 1.5em;
+        font-style: italic;
+      }
+
+      /* ── 方案 3：渐变线 gradient ── */
+      .style-gradient h2 {
+        font-family: var(--header-font);
+        font-size: 1.45rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 2.2rem 0 0.6rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 3px solid transparent;
+        border-image: linear-gradient(to right, var(--secondary), var(--tertiary) 60%, transparent)
+          1;
+      }
+      .style-gradient h3 {
+        font-family: var(--header-font);
+        font-size: 1.12rem;
+        font-weight: 600;
+        color: var(--secondary);
+        margin: 1.5rem 0 0.5rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 1px solid var(--tertiary);
+        display: inline-block;
+      }
+      .style-gradient h4 {
+        font-family: var(--header-font);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--gray);
+        margin: 1rem 0 0.4rem;
+        text-decoration: underline dotted var(--tertiary);
+        text-underline-offset: 4px;
+      }
+
+      /* ── 方案 4：卡片 card ── */
+      .style-card h2 {
+        font-family: var(--header-font);
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 2rem 0 0.8rem;
+        padding: 0.6rem 1rem;
+        background: var(--light);
+        border: 1px solid var(--lightgray);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 12%, transparent);
+      }
+      .style-card h3 {
+        font-family: var(--header-font);
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--secondary);
+        margin: 1.4rem 0 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-left: 3px solid var(--secondary);
+        background: color-mix(in srgb, var(--lightgray) 60%, transparent);
+        border-radius: 0 6px 6px 0;
+      }
+      .style-card h4 {
+        font-family: var(--header-font);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--gray);
+        margin: 1rem 0 0.4rem;
+        padding: 0.25rem 0.5rem 0.25rem 1rem;
+        border-left: 1px solid var(--tertiary);
+        background: color-mix(in srgb, var(--lightgray) 30%, transparent);
+      }
+
+      /* ── 对比区 ── */
+      .compare-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--lightgray);
+      }
+
+      .compare-section > h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+        font-family: var(--body-font);
+      }
+
+      .compare-desc {
+        font-size: 0.82rem;
+        color: var(--gray);
+        margin-bottom: 1.25rem;
+      }
+
+      .compare-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .compare-card {
+        border: 1px solid var(--lightgray);
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .compare-card:hover {
+        border-color: var(--secondary);
+        box-shadow: 0 2px 12px color-mix(in srgb, var(--secondary) 15%, transparent);
+      }
+
+      .compare-card.selected {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--secondary) 25%, transparent);
+      }
+
+      .compare-card .card-title {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--secondary);
+        margin-bottom: 0.6rem;
+      }
+
+      .compare-card .card-key {
+        font-size: 0.68rem;
+        color: var(--gray);
+        font-family: ui-monospace, monospace;
+        margin-bottom: 0.5rem;
+        opacity: 0.8;
+      }
+
+      .mini-preview {
+        font-size: 0.72rem;
+        line-height: 1.45;
+      }
+      .mini-preview h2 {
+        margin: 0 0 0.3rem !important;
+      }
+      .mini-preview h3 {
+        margin: 0.25rem 0 0.2rem !important;
+      }
+      .mini-preview h4 {
+        margin: 0.15rem 0 0 !important;
+      }
+
+      .config-preview {
+        margin-top: 2.5rem;
+        padding: 1rem 1.25rem;
+        background: color-mix(in srgb, var(--lightgray) 50%, transparent);
+        border-radius: 8px;
+        border: 1px solid var(--lightgray);
+      }
+
+      .config-preview h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        color: var(--dark);
+        font-family: var(--body-font);
+      }
+
+      .config-preview pre {
+        font-size: 0.78rem;
+        line-height: 1.6;
+        color: var(--gray);
+        overflow-x: auto;
+        font-family: ui-monospace, "SF Mono", monospace;
+      }
+
+      .config-preview .hl {
+        color: var(--secondary);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body data-theme="light">
+    <header class="topbar">
+      <h1>Heading Format 预览</h1>
+      <div class="controls">
+        <select class="style-select" id="styleSelect" aria-label="选择标题样式方案"></select>
+        <button class="theme-btn" id="themeToggle">🌙 暗色模式</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <div class="style-meta">
+        <span class="style-label" id="styleLabel">方案 1 · 强调条</span>
+        <span class="style-hint" id="styleDesc">左侧色条 + 浅背景，适合技术文档</span>
+      </div>
+
+      <article class="article style-accent" id="previewArticle">
+        <h2>二级标题：Quartz 插件开发入门</h2>
+        <p>
+          这是一段正文示例。二级标题通常用于划分文章的主要章节，读者扫一眼就能感知到内容的结构层次。
+        </p>
+
+        <h3>三级标题：Transformer 与 Component 的区别</h3>
+        <p>
+          三级标题用于章节内的子话题。与二级标题相比，它应该视觉上更轻、更内敛，但仍然清晰可辨。
+        </p>
+
+        <h4>四级标题：Transformer 的工作流程</h4>
+        <p>四级标题适合更细粒度的说明，例如某个概念下的具体步骤或注意点，视觉上应比三级更淡。</p>
+        <ul>
+          <li>Transformer 负责处理 Markdown / HTML 内容</li>
+          <li>Component 负责页面布局中的 UI 组件</li>
+        </ul>
+
+        <h2>二级标题：样式设计原则</h2>
+        <p>好的标题层级设计，不只是字号差异。颜色、间距、装饰元素共同传达信息的优先级。</p>
+
+        <h3>三级标题：暗色模式适配</h3>
+        <p>所有样式均使用 Quartz CSS 变量，切换暗色模式后效果依然协调。点击右上角按钮试试看。</p>
+
+        <h3>三级标题：与锚点链接兼容</h3>
+        <p>插件实现时会给 h2 / h3 / h4 添加专用 class，不影响 rehype-slug 生成的锚点功能。</p>
+
+        <h4>四级标题：rehype 插件注入 class</h4>
+        <p>构建阶段通过 rehype 遍历标题节点，按层级附加不同 class，再由 CSS 呈现差异化样式。</p>
+      </article>
+
+      <section class="compare-section">
+        <h2>全部方案 — 点击卡片切换主预览</h2>
+        <p class="compare-desc">
+          插件提供以下 4 套预设，用户通过 <code>style</code> 选项自由切换。
+        </p>
+        <div class="compare-grid" id="compareGrid"></div>
+      </section>
+
+      <section class="config-preview">
+        <h3>插件配置预览</h3>
+        <pre id="configSnippet"></pre>
+      </section>
+    </main>
+
+    <script>
+      const STYLES = [
+        {
+          key: "accent",
+          class: "style-accent",
+          name: "强调条",
+          desc: "左侧色条 + 浅背景，适合技术文档",
+        },
+        {
+          key: "minimal",
+          class: "style-minimal",
+          name: "极简",
+          desc: "颜色/字重/缩进区分，克制不抢眼",
+        },
+        {
+          key: "gradient",
+          class: "style-gradient",
+          name: "渐变线",
+          desc: "渐变底线 + 递进下划线，清爽利落",
+        },
+        { key: "card", class: "style-card", name: "卡片", desc: "阴影卡片 + 嵌套色块，层次感强" },
+      ]
+
+      const article = document.getElementById("previewArticle")
+      const styleLabel = document.getElementById("styleLabel")
+      const styleDesc = document.getElementById("styleDesc")
+      const styleSelect = document.getElementById("styleSelect")
+      const compareGrid = document.getElementById("compareGrid")
+      const configSnippet = document.getElementById("configSnippet")
+
+      let current = "accent"
+
+      function buildUI() {
+        STYLES.forEach((s, i) => {
+          const opt = document.createElement("option")
+          opt.value = s.key
+          opt.textContent = `方案 ${i + 1} · ${s.name}`
+          styleSelect.appendChild(opt)
+
+          const card = document.createElement("div")
+          card.className = "compare-card" + (s.key === current ? " selected" : "")
+          card.dataset.style = s.key
+          card.innerHTML = `
+          <div class="card-title">方案 ${i + 1} · ${s.name}</div>
+          <div class="card-key">style: "${s.key}"</div>
+          <div class="mini-preview ${s.class}">
+            <h2>二级标题</h2>
+            <h3>三级标题</h3>
+            <h4>四级标题</h4>
+          </div>`
+          card.addEventListener("click", () => applyStyle(s.key))
+          compareGrid.appendChild(card)
+        })
+      }
+
+      function applyStyle(key) {
+        const s = STYLES.find((x) => x.key === key)
+        if (!s) return
+        current = key
+
+        article.className = "article " + s.class
+        styleLabel.textContent = `方案 ${STYLES.indexOf(s) + 1} · ${s.name}`
+        styleDesc.textContent = s.desc
+        styleSelect.value = key
+
+        document.querySelectorAll(".compare-card").forEach((card) => {
+          card.classList.toggle("selected", card.dataset.style === key)
+        })
+
+        configSnippet.innerHTML = `plugins:
+  - source: github:quartz-lib/heading-format
+    enabled: true
+    options:
+      <span class="hl">style: "${s.key}"</span>   # ${s.name}`
+      }
+
+      styleSelect.addEventListener("change", () => applyStyle(styleSelect.value))
+
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const body = document.body
+        const dark = body.dataset.theme === "dark"
+        body.dataset.theme = dark ? "light" : "dark"
+        document.getElementById("themeToggle").textContent = dark ? "🌙 暗色模式" : "☀️ 亮色模式"
+      })
+
+      buildUI()
+      applyStyle(current)
+    </script>
+  </body>
+</html>
